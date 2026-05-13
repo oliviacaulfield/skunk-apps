@@ -31,10 +31,10 @@ State tracker for the fraud triage build. Claude should read this at the start o
 - [x] First API route successfully connects to Atlas
 
 ### Data
-- [ ] `transactions` collection seeded (~50-100 docs)
-- [ ] `fraudCases` collection seeded (~20-30 docs)
-- [ ] `analysts` collection seeded (a handful)
-- [ ] Seed script committed and re-runnable
+- [x] `transactions` collection seeded (75 docs)
+- [x] `fraudCases` collection seeded (25 docs)
+- [x] `analysts` collection seeded (3 docs)
+- [x] Seed script committed and re-runnable (`npm run seed`)
 
 ### App screens
 - [ ] Queue view: lists suspicious transactions
