@@ -17,9 +17,9 @@ State tracker for the fraud triage build. Claude should read this at the start o
 - [x] Database user created
 - [x] IP access list configured
 - [x] Connection string saved locally (not committed)
-- [ ] MongoDB for VS Code extension installed
-- [ ] MongoDB MCP server set up and connected to Claude in VS Code
-- [ ] MCP server verified — Claude can query my Atlas cluster
+- [x] MongoDB for VS Code extension installed
+- [x] MongoDB MCP server set up and connected to Claude in VS Code
+- [x] MCP server verified — Claude can query my Atlas cluster
 
 ### Repo scaffolding
 - [x] `fraud-triage/` subdirectory created

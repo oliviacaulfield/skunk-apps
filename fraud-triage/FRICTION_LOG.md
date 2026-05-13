@@ -46,6 +46,18 @@ Copy this block when adding a new entry.
 
 <!-- Add new entries below this line, newest at the top -->
 
+### Atlas wizard triggers npm install before project exists
+- **Category:** `setup`
+- **When:** Day 1, morning, during Atlas connection string setup
+- **What happened:** After creating the cluster, the Atlas "Connect" wizard showed Node.js driver setup instructions and prompted me to run `npm install mongodb` — before any app framework was scaffolded.
+- **What I expected:** Driver installation instructions to appear in context of an existing project, or at least a note that this step should wait until there's a package.json to install into.
+- **What I tried:** Followed the Atlas instructions literally, running `npm install mongodb` in the app subdirectory.
+- **How I unstuck (or didn't):** Not a blocker, but required a note to handle the premature package.json when scaffolding Next.js later.
+- **Time lost (rough):** ~1 minute of confusion
+- **Suggested fix / what would have helped:** Atlas wizard should either defer the install step or note "run this after initializing your project."
+
+---
+
 ### Atlas onboarding order: IP allowlist before database user
 - **Category:** `setup`
 - **When:** Day 1, morning, during Atlas cluster setup
