@@ -2,8 +2,8 @@
 
 State tracker for the fraud triage build. Claude should read this at the start of every session to know where we are. I update it as I go; Claude can suggest updates when a step is completed.
 
-**Current phase:** Day 1 — Foundation, not started
-**Current branch:** `main` (nothing created yet)
+**Current phase:** Day 1 — Foundation, in progress
+**Current branch:** `setup/atlas-connection`
 **Last session ended:** N/A
 
 ---
@@ -11,21 +11,21 @@ State tracker for the fraud triage build. Claude should read this at the start o
 ## Day 1 — Foundation
 
 ### Setup
-- [ ] Atlas account created
-- [ ] Atlas project created
-- [ ] Atlas cluster created (free tier M0)
-- [ ] Database user created
-- [ ] IP access list configured
-- [ ] Connection string saved locally (not committed)
+- [x] Atlas account created
+- [x] Atlas project created
+- [x] Atlas cluster created (free tier M0)
+- [x] Database user created
+- [x] IP access list configured
+- [x] Connection string saved locally (not committed)
 - [ ] MongoDB for VS Code extension installed
 - [ ] MongoDB MCP server set up and connected to Claude in VS Code
 - [ ] MCP server verified — Claude can query my Atlas cluster
 
 ### Repo scaffolding
-- [ ] `fraud-triage/` subdirectory created
+- [x] `fraud-triage/` subdirectory created
 - [ ] Next.js + TypeScript + Tailwind scaffolded
-- [ ] `.env.local` set up with connection string
-- [ ] `.gitignore` excludes `.env.local`, `node_modules`, `.next`
+- [x] `.env.local` set up with connection string
+- [x] `.gitignore` excludes `.env.local`, `node_modules`, `.next`
 - [ ] `mongodb` driver package installed
 - [ ] Shared MongoDB client helper written (one connection, reused)
 - [ ] First API route successfully connects to Atlas

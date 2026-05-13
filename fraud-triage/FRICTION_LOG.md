@@ -46,6 +46,16 @@ Copy this block when adding a new entry.
 
 <!-- Add new entries below this line, newest at the top -->
 
+### Atlas onboarding order: IP allowlist before database user
+- **Category:** `setup`
+- **When:** Day 1, morning, during Atlas cluster setup
+- **What happened:** The Atlas onboarding flow prompted me to add my IP to the access list before I had created a database user. This was the opposite of the order described in the setup walkthrough.
+- **What I expected:** Create database user first, then configure IP access — matching the logical dependency (user must exist before you can test a connection).
+- **What I tried:** Followed the UI flow as presented.
+- **How I unstuck (or didn't):** Proceeded in the order Atlas presented; setup succeeded.
+- **Time lost (rough):** ~2 minutes of confusion
+- **Suggested fix / what would have helped:** Atlas onboarding should either match the documented order or make clear that order doesn't matter functionally.
+
 ---
 
 ## Wins
