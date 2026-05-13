@@ -27,8 +27,8 @@ State tracker for the fraud triage build. Claude should read this at the start o
 - [x] `.env.local` set up with connection string (in `fraud-triage/dev/`)
 - [x] `.gitignore` excludes `.env.local`, `node_modules`, `.next`
 - [x] `mongodb` driver package installed
-- [ ] Shared MongoDB client helper written (one connection, reused)
-- [ ] First API route successfully connects to Atlas
+- [x] Shared MongoDB client helper written (one connection, reused)
+- [x] First API route successfully connects to Atlas
 
 ### Data
 - [ ] `transactions` collection seeded (~50-100 docs)
