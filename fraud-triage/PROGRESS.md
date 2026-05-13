@@ -23,10 +23,10 @@ State tracker for the fraud triage build. Claude should read this at the start o
 
 ### Repo scaffolding
 - [x] `fraud-triage/` subdirectory created
-- [ ] Next.js + TypeScript + Tailwind scaffolded
-- [x] `.env.local` set up with connection string
+- [x] Next.js + TypeScript + Tailwind scaffolded (lives in `fraud-triage/dev/`)
+- [x] `.env.local` set up with connection string (in `fraud-triage/dev/`)
 - [x] `.gitignore` excludes `.env.local`, `node_modules`, `.next`
-- [ ] `mongodb` driver package installed
+- [x] `mongodb` driver package installed
 - [ ] Shared MongoDB client helper written (one connection, reused)
 - [ ] First API route successfully connects to Atlas
 
