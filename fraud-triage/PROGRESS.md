@@ -37,14 +37,14 @@ State tracker for the fraud triage build. Claude should read this at the start o
 - [x] Seed script committed and re-runnable (`npm run seed`)
 
 ### App screens
-- [ ] Queue view: lists suspicious transactions
-- [ ] Queue view: filter by status
-- [ ] Queue view: filter by risk score bucket
-- [ ] Queue view: filter by merchant category
-- [ ] Case detail view: shows transaction details
-- [ ] Case detail view: shows linked fraud case if present
-- [ ] Case detail view: analyst notes form (saves to `fraudCases`)
-- [ ] `searchableText` field populated on `fraudCases`
+- [x] Queue view: lists suspicious transactions
+- [x] Queue view: filter by status
+- [x] Queue view: filter by risk score bucket
+- [x] Queue view: filter by merchant category
+- [x] Case detail view: shows transaction details
+- [x] Case detail view: shows linked fraud case if present
+- [x] Case detail view: analyst notes form (saves to `fraudCases`)
+- [x] `searchableText` field populated on `fraudCases`
 
 ### Indexes
 - [ ] Regular index on `transactions.status`
