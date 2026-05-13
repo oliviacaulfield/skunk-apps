@@ -47,15 +47,15 @@ State tracker for the fraud triage build. Claude should read this at the start o
 - [x] `searchableText` field populated on `fraudCases`
 
 ### Indexes
-- [ ] Regular index on `transactions.status`
-- [ ] Regular index on `transactions.riskScore`
-- [ ] Regular index on `transactions.createdAt`
+- [x] Regular index on `transactions.status`
+- [x] Regular index on `transactions.riskScore`
+- [x] Regular index on `transactions.createdAt`
 
 ### End-of-day-1 checkpoint
-- [ ] Working Atlas-backed app running locally
-- [ ] Queue and case detail screens both functional
-- [ ] Notes form persists data
-- [ ] Friction log has at least 5 entries
+- [x] Working Atlas-backed app running locally
+- [x] Queue and case detail screens both functional
+- [x] Notes form persists data
+- [ ] Friction log has at least 5 entries (2 so far — add more as Day 2 proceeds)
 
 ---
 
@@ -98,9 +98,8 @@ State tracker for the fraud triage build. Claude should read this at the start o
 
 A running list of what we did each session. Append a new entry at the end of each session.
 
-### Session 1 — [date]
-- Started: [time]
-- Branch: 
-- Did:
-- Stuck on:
-- Next:
+### Session 1 — 2026-05-13
+- Branch: `setup/atlas-connection`
+- Did: Atlas cluster + MCP server + VS Code extension + Next.js scaffold in `fraud-triage/dev/` + MongoDB client + seed data (75 tx, 25 cases, 3 analysts) + queue view with filters + case detail page + analyst notes form + 3 transaction indexes
+- Stuck on: create-next-app refusing to scaffold into non-empty directory (worked around with `dev/` subdirectory); write permissions for `fraud-triage/dev/` required manual `.env.local` creation
+- Next: Day 2 — Vector Search index, similar-cases query, wire to UI
