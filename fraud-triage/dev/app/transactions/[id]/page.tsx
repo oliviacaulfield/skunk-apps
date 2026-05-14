@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 
@@ -27,7 +27,22 @@ type FraudCase = {
   createdAt: string
 }
 
+type SimilarCase = {
+  _id: string
+  caseSummary: string
+  disposition: string
+  tags: string[]
+  analystNotes: string
+  score: number
+}
+
 const DISPOSITIONS = ['under_investigation', 'confirmed_fraud', 'cleared']
+
+function dispositionColor(d: string) {
+  if (d === 'confirmed_fraud') return 'bg-red-100 text-red-800'
+  if (d === 'cleared') return 'bg-green-100 text-green-800'
+  return 'bg-yellow-100 text-yellow-800'
+}
 
 function riskColor(score: number) {
   if (score >= 70) return 'bg-red-100 text-red-800'
@@ -50,6 +65,13 @@ export default function TransactionDetailPage() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
 
+  const [similarCases, setSimilarCases] = useState<SimilarCase[] | null>(null)
+  const [loadingSimilar, setLoadingSimilar] = useState(false)
+  const [similarFilter, setSimilarFilter] = useState<string>('')
+  const [fetchedFilter, setFetchedFilter] = useState<string | null>(null)
+  const [similarError, setSimilarError] = useState<'rate_limited' | 'failed' | null>(null)
+  const similarCacheRef = useRef<Map<string, SimilarCase[]>>(new Map())
+
   useEffect(() => {
     fetch(`/api/transactions/${id}`)
       .then(r => r.json())
@@ -63,6 +85,37 @@ export default function TransactionDetailPage() {
         setLoading(false)
       })
   }, [id])
+
+  async function handleFindSimilar(filter = similarFilter) {
+    if (!fraudCase?._id || loadingSimilar) return
+    const cacheKey = `${fraudCase._id}:${filter}`
+    if (similarCacheRef.current.has(cacheKey)) {
+      setSimilarCases(similarCacheRef.current.get(cacheKey)!)
+      setFetchedFilter(filter)
+      setSimilarError(null)
+      return
+    }
+    setLoadingSimilar(true)
+    setSimilarError(null)
+    try {
+      const url = `/api/cases/${fraudCase._id}/similar${filter ? `?disposition=${filter}` : ''}`
+      const res = await fetch(url)
+      if (res.status === 429) {
+        setSimilarError('rate_limited')
+        return
+      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const data = await res.json()
+      const results = data.results ?? []
+      similarCacheRef.current.set(cacheKey, results)
+      setSimilarCases(results)
+      setFetchedFilter(filter)
+    } catch {
+      setSimilarError('failed')
+    } finally {
+      setLoadingSimilar(false)
+    }
+  }
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
@@ -202,6 +255,86 @@ export default function TransactionDetailPage() {
             </div>
           </form>
         </div>
+
+        {/* Similar cases */}
+        {fraudCase && (
+          <div className="mt-6">
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={() => handleFindSimilar()}
+                disabled={loadingSimilar}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-white border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 shadow-sm"
+              >
+                {loadingSimilar ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                    </svg>
+                    Finding similar cases…
+                  </>
+                ) : (
+                  <>
+                    <svg className="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+                    </svg>
+                    Find similar prior cases
+                  </>
+                )}
+              </button>
+              <select
+                value={similarFilter}
+                onChange={e => {
+                  setSimilarFilter(e.target.value)
+                  if (similarCases !== null) handleFindSimilar(e.target.value)
+                }}
+                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="">All dispositions</option>
+                {DISPOSITIONS.map(d => <option key={d} value={d}>{fmt(d)}</option>)}
+              </select>
+            </div>
+
+            {similarError && (
+              <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+                {similarError === 'rate_limited'
+                  ? 'Rate limit reached (3 req/min on free tier). Wait a moment and try again, or add a payment method in Atlas to increase limits.'
+                  : 'Search failed. Check the server logs for details.'}
+              </div>
+            )}
+
+            {similarCases !== null && !similarError && (
+              <div className="mt-4 space-y-3">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  {similarCases.length === 0 ? 'No similar cases found' : `${similarCases.length} similar case${similarCases.length !== 1 ? 's' : ''}`}
+                </p>
+                {similarCases.map(c => (
+                  <div key={c._id} className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <p className="text-sm text-gray-900 leading-snug">{c.caseSummary}</p>
+                      <span className={`shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${dispositionColor(c.disposition)}`}>
+                        {fmt(c.disposition)}
+                      </span>
+                    </div>
+                    {c.analystNotes && (
+                      <p className="text-xs text-gray-500 line-clamp-2 mb-2">{c.analystNotes}</p>
+                    )}
+                    <div className="flex items-center justify-between">
+                      <div className="flex flex-wrap gap-1">
+                        {c.tags?.slice(0, 3).map(t => (
+                          <span key={t} className="inline-flex px-1.5 py-0.5 rounded text-xs bg-gray-100 text-gray-600">{t}</span>
+                        ))}
+                      </div>
+                      <span className="text-xs text-gray-400 font-mono" title="Cosine similarity score (0–1)">
+                        {c.score.toFixed(4)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
       </div>
     </div>

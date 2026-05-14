@@ -62,21 +62,22 @@ State tracker for the fraud triage build. Claude should read this at the start o
 ## Day 2 — Vector Search
 
 ### Vector Search setup
-- [ ] Decided which embedding path is being used (Automated vs manual)
-- [ ] Vector Search index created on `fraudCases`
-- [ ] Index includes filterable metadata fields (country, merchantCategory, disposition, status)
-- [ ] First successful `$vectorSearch` query run from VS Code extension or shell
-- [ ] First successful `$vectorSearch` query run from app code
+- [x] Decided which embedding path is being used (Automated Embedding, voyage-4)
+- [x] Vector Search index created on `fraudCases` (index: `autoembed_index`)
+- [x] Index includes filterable metadata fields (disposition indexed; country/merchantCategory not on fraudCases — disposition filter used instead)
+- [x] First successful `$vectorSearch` query run via MCP
+- [x] First successful `$vectorSearch` query run from app code
 
 ### Similar cases feature
-- [ ] "Find similar prior fraud cases" button on case detail page
-- [ ] Similar cases panel renders results
-- [ ] Results show: similarity score, case summary, disposition, key note snippet
-- [ ] Metadata pre-filter applied (e.g., same country or same merchant category)
+- [x] "Find similar prior fraud cases" button on case detail page
+- [x] Similar cases panel renders results
+- [x] Results show: similarity score, case summary, disposition, key note snippet
+- [x] Metadata pre-filter applied (disposition filter wired to `$vectorSearch` filter param)
+- [x] Client-side cache (per case+filter) to stay within 3 RPM free-tier rate limit
 
 ### Polish
-- [ ] Small dashboard page (open cases, fraud cases by merchant category, avg risk score)
-- [ ] UI cleaned up to demo-ready
+- [x] Small dashboard page (transaction queue stats + cases opened + fraud by merchant category)
+- [x] UI cleaned up to demo-ready
 - [ ] README in `fraud-triage/` explains how to run it
 
 ### Deliverables
