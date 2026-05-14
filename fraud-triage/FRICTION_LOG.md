@@ -144,6 +144,30 @@ Things that worked better than expected. Same format, lighter touch.
 
 <!-- Add wins below this line -->
 
+### MCP server let Claude query Atlas mid-conversation
+- **Category:** `mcp`
+- **When:** Day 2, morning, before writing any app code
+- **What happened:** Used the MongoDB MCP server to run `$vectorSearch` directly from the conversation — verified the query syntax and checked that results were semantically correct before touching the Next.js codebase.
+- **Why it helped:** Caught the `queryText` → `query` parameter mistake at the shell level rather than inside a React component. One iteration cycle instead of three.
+
+### Automated Embedding — no external API key needed
+- **Category:** `vector-search`
+- **When:** Day 2, morning, during Vector Search index setup
+- **What happened:** Atlas offered built-in Voyage AI models (voyage-4) with no external API key required. Expected to need an OpenAI key and a separate embedding pipeline.
+- **Why it helped:** Removed an entire setup step and billing relationship. Index creation to first working query took under 10 minutes.
+
+### Atlas Vector Search Visual Editor made index config approachable
+- **Category:** `vector-search`
+- **When:** Day 2, morning, during index creation
+- **What happened:** The Visual Editor walked through field selection, model choice, and filter fields with dropdowns rather than requiring raw JSON. Never needed to look up the index definition schema.
+- **Why it helped:** As a novice, writing a valid vector index JSON definition from scratch would have required a docs detour. The UI eliminated that entirely.
+
+### MongoDB aggregation pipeline for dashboard was readable on first try
+- **Category:** `driver`
+- **When:** Day 2, afternoon, during dashboard build
+- **What happened:** `$lookup` + `$unwind` + `$group` + `$sort` to get fraud cases by merchant category worked correctly on the first attempt.
+- **Why it helped:** The pipeline stage model is intuitive to read and debug — each stage is one transformation. No ORM translation layer to reason about.
+
 ---
 
 ## End-of-build summary
@@ -151,25 +175,47 @@ Things that worked better than expected. Same format, lighter touch.
 Filled in at the end of day 2.
 
 ### Top 5 docs gaps
-1. 
-2. 
-3. 
-4. 
-5. 
+
+1. **$vectorSearch Automated Embedding query syntax** — no example in the docs shows the correct parameter name (`query`) for passing a text string when using Automated Embedding. `queryVector` is well-documented for manual embeddings; the text input equivalent is not.
+
+2. **numCandidates + pre-filter interaction** — the docs don't explain that `numCandidates` must be set relative to the filtered candidate pool, not the full collection. On small or heavily filtered collections, a low `numCandidates` silently returns 0 results with no error.
+
+3. **Voyage AI rate limits on the free tier** — the 3 RPM / 10K TPM limit for accounts without a payment method is not shown during index creation. The billing checkbox says "you may be charged" but doesn't say "you will be rate-limited to 3 requests per minute during development."
+
+4. **Atlas setup order inconsistency** — the Atlas onboarding UI presents IP allowlist before database user creation, while the written setup guide describes the opposite order. Neither explains that the order doesn't matter functionally.
+
+5. **How to construct searchableText for good semantic search** — there's no guidance on what to put in the field you're embedding. Should it be short or long? Structured or prose? Tags or sentences? This affects result quality significantly and is left entirely to the developer.
+
+---
 
 ### Top 5 "Claude got this wrong"
-1. 
-2. 
-3. 
-4. 
-5. 
+
+1. **`queryText` instead of `query`** — used the wrong parameter name for the Automated Embedding text input in `$vectorSearch`. Error message from MongoDB was clear enough to self-correct in under a minute, but it shouldn't have been a guess.
+
+2. **`numCandidates: 15` on a filtered small collection** — set a low value that caused the pre-filtered vector search to return 0 results. Needed to be set higher than the collection size.
+
+3. **AbortController pattern introduced a re-click bug** — adding AbortController to prevent stale fetch results introduced a new bug where clicking the button a second time (after results loaded) showed empty results. The simpler version-counter pattern was correct; AbortController had edge cases in this specific React flow.
+
+4. **Cosine similarity displayed as "% match"** — framed the raw cosine score as a percentage, which implies a 0–100 grading scale. `0.506` looks like a failing grade when it's actually a meaningful similarity signal. Should have used raw score or rank labels from the start.
+
+5. **"Analyst-worked" UI label** — used internal jargon in a UI label that an actual user would see. Required two rounds of feedback to land on "Transactions reviewed by an analyst."
+
+---
 
 ### Top 5 "MongoDB tooling really helped"
-1. 
-2. 
-3. 
-4. 
-5. 
+
+1. **MongoDB MCP server** — running `$vectorSearch` aggregations directly from the conversation before writing any app code caught the query syntax mistake early and confirmed semantic results were correct. This is the single most valuable tool in the workflow.
+
+2. **Atlas Vector Search Visual Editor** — index creation without needing to know the raw JSON schema. Dropdowns for model selection and filter fields made a complex configuration approachable on first try.
+
+3. **Automated Embedding with voyage-4** — no external API key, no separate embedding pipeline, no dimension math. Atlas handles generation at both index and query time.
+
+4. **MongoDB aggregation pipeline** — `$lookup` + `$group` + `$sort` for the dashboard stats worked correctly first try and was readable without reference docs. The stage-by-stage mental model is easier to debug than a query builder or ORM.
+
+5. **MongoDB for VS Code extension** — used throughout Day 1 to verify seed data visually. Browsing collections and documents in the sidebar is faster than writing find queries during development.
+
+---
 
 ### One-paragraph retrospective
-_What was the experience of going from zero to a working Vector Search app in 2 days? What should a brand-new MongoDB customer have found faster?_
+
+Going from zero to a working Vector Search app in 2 days was genuinely achievable — the core Atlas setup, data seeding, and UI took most of Day 1, and Vector Search was wired end-to-end by mid-Day 2. The technology itself was not the obstacle. Friction concentrated in two places: the billing and rate-limit communication around Automated Embedding, and gaps in the docs around `$vectorSearch` query syntax for the Automated Embedding path specifically. Both of these hit in the first 30 minutes of Day 2 and cost more time than any actual coding. A new MongoDB customer should find two things faster: (1) a worked example showing the exact `$vectorSearch` aggregation stage for Automated Embedding with `query:` instead of `queryVector:`, and (2) a clear rate limit disclosure during index setup so that hitting a 429 on the 4th test request doesn't feel like something broke.

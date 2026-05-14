@@ -81,11 +81,11 @@ State tracker for the fraud triage build. Claude should read this at the start o
 - [ ] README in `fraud-triage/` explains how to run it
 
 ### Deliverables
-- [ ] `FRICTION_LOG.md` filled out with concrete entries throughout build
-- [ ] Top 5 docs gaps written up
-- [ ] Top 5 "Claude got this wrong" notes written up
-- [ ] Top 5 "MongoDB tooling really helped here" notes written up
-- [ ] 1-page build retrospective
+- [x] `FRICTION_LOG.md` filled out with concrete entries throughout build (7 friction entries, 4 wins)
+- [x] Top 5 docs gaps written up
+- [x] Top 5 "Claude got this wrong" notes written up
+- [x] Top 5 "MongoDB tooling really helped here" notes written up
+- [x] 1-page build retrospective
 
 ### Stretch (only if time)
 - [ ] Hybrid search (vector + keyword)
@@ -98,6 +98,12 @@ State tracker for the fraud triage build. Claude should read this at the start o
 ## Session log
 
 A running list of what we did each session. Append a new entry at the end of each session.
+
+### Session 2 — 2026-05-14
+- Branch: `feature/vector-search`
+- Did: Vector Search index (autoembed_index, voyage-4) → first $vectorSearch query via MCP → similar cases API + UI panel with disposition filter + client-side cache → dashboard page → README → FRICTION_LOG.md end-of-build summary
+- Friction: Automated Embedding rate limit (3 RPM without payment method) hit during testing; $vectorSearch query parameter was `query` not `queryText`; numCandidates too low for pre-filtered small collection
+- Next: merge branch, optional Vercel deploy
 
 ### Session 1 — 2026-05-13
 - Branch: `setup/atlas-connection`
